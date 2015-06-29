@@ -1,0 +1,38 @@
+{
+  "name": "slate",
+  "version": "0.0.1",
+  "description": "Check assertion processor",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opsee/slate.git"
+  },
+  "author": "Opsee",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/opsee/slate/issues"
+  },
+  "homepage": "https://github.com/opsee/slate#readme",
+  "dependencies": {
+    "body-parser": "^1.13.1",
+    "chai-things": "^0.2.0",
+    "colors": "^1.1.2",
+    "express": "^4.13.0",
+    "grunt": "^0.4.5",
+    "grunt-nodemon": "^0.4.0",
+    "http": "0.0.0",
+    "load-grunt-tasks": "^3.2.0",
+    "lodash": "^3.9.3",
+    "logger": "0.0.1",
+    "method-override": "^2.3.3",
+    "swig": "^1.4.2",
+    "tracer": "^0.7.4"
+  },
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "mocha": "^2.2.5"
+  }
+}
