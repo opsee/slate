@@ -35,10 +35,19 @@ var Relationships = {
   }
 }
 
-var AssertionTypes = ['statusCode','header','body'];
+var Tests = {
+  statusCode:{
+  },
+  header:{
+
+  },
+  body:{
+
+  }
+}
 
 function test(assertion,res){
-    if(!assertion || !res || assertion.value===null || !assertion.relationship.name){
+    if(!assertion || !res || assertion.test===null || !assertion.relationship.name){
       return false;
     }
     var name = assertion.type.name;
@@ -46,7 +55,7 @@ function test(assertion,res){
     switch(name){
       case 'Status Code':
         try{
-          var code = assertion.value;
+          var code = assertion.test;
           var status = res.status.toString();
           return Relationships[relationship].call(this,status,code);
         }catch(err){
@@ -55,8 +64,8 @@ function test(assertion,res){
       break;
       case 'Header':
         try{
-          var name = typeof assertion.value.name == 'object' ? assertion.value.name[0] : assertion.value.name;
-          var value = typeof assertion.value.value == 'object' ? assertion.value.value[1] : assertion.value.value;
+          var name = typeof assertion.test.name == 'object' ? assertion.test.name[0] : assertion.test.name;
+          var value = typeof assertion.test.value == 'object' ? assertion.test.value[1] : assertion.test.value;
           var header = _.chain(res.responseHeaders).filter(function(h){
             return h[0] == name;
           }).first().value();
@@ -78,7 +87,7 @@ function test(assertion,res){
       break;
       case 'Response Body':
       try{
-        var text = assertion.value;
+        var text = assertion.test;
         var body = JSON.stringify(res.data);
         if(relationship == 'Is Empty'){
           return !body;
@@ -98,7 +107,7 @@ var example = {
     {
       type:'statusCode',
       relationship:'equal',
-      value:'200'
+      test:200
     }
   ],
   response:{
@@ -196,9 +205,12 @@ var example = {
 function setup(obj){
   expect(_).to.exist;
 
-  //setup AssertionTypes
-  expect(AssertionTypes).to.exist;
-  expect(AssertionTypes).to.have.length.above(0);
+  //setup Tests
+  expect(Tests).to.exist;
+  expect(Tests).to.be.an('object');
+  var keys = _.keys(Tests);
+  expect(keys).to.exist;
+  expect(keys).to.have.length.above(0);
 
   //setup Relationships
   expect(Relationships).to.exist;
@@ -215,13 +227,25 @@ function setup(obj){
   //ensure assertions
   expect(obj.assertions).to.be.an('array');
   expect(obj.assertions).to.have.length.above(0);
+
+  //loop through each assertion
   _.forEach(obj.assertions, function(assertion, index){
-    var inc = _.includes(AssertionTypes,assertion.type);
-    expect(inc, 'Unsupported assertion type "'+assertion.type).to.be.ok;
+    expect(assertion.test).to.exist;
+    if(typeof assertion.test === 'number'){
+      assertion.test = assertion.test.toString();
+    }
+    expect(assertion.test, 'Check assertion index '+index+' test').to.be.a('string');
+    var keys = _.keys(Tests);
+    var inc = _.includes(keys,assertion.type);
+    expect(inc, 'Unsupported check assertion type "'+assertion.type+'"').to.be.ok;
     var keys = _.keys(Relationships);
     var inc = _.includes(keys,assertion.relationship);
-    expect(inc, 'Unsupported relationship "'+assertion.relationship+'"').to.be.ok;
+    expect(inc, 'Unsupported check relationship "'+assertion.relationship+'"').to.be.ok;
   });
+
+  //ensure response
+  expect(obj.response, 'Check response').to.be.an('object');
+  expect(obj.response, 'Check response').to.contain.all.keys(['status','responseHeaders']);
 
   console.log('Speak: Pass.'.blue);
   return true;
