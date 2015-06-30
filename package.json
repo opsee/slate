@@ -29,9 +29,7 @@
     "logger": "0.0.1",
     "method-override": "^2.3.3",
     "swig": "^1.4.2",
-    "tracer": "^0.7.4"
-  },
-  "devDependencies": {
+    "tracer": "^0.7.4",
     "chai": "^3.0.0",
     "mocha": "^2.2.5"
   }
