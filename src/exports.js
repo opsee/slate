@@ -1,2 +1,2 @@
 window._ = require('_');
-window.slate = require('speak');
+window.slate = require('slate');
