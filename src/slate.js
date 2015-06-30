@@ -52,44 +52,42 @@ var Relationships = {
   }
 }
 
-function ensureResponse(obj){
-  expect(obj, 'Check').to.exist;
-  expect(obj, 'Check').to.be.an('object');
-  expect(obj.response, 'Check response').to.exist;
-  expect(obj.response, 'Check response').to.be.an('object');
+function ensureResponse(response){
+  expect(response, 'Response').to.exist;
+  expect(response, 'Response').to.be.an('object');
 }
 
 var Tests = {
-  statusCode:function(obj){
-    ensureResponse(obj);
-    return obj.response.status.toString();
+  statusCode:function(response){
+    ensureResponse(response);
+    return response.status.toString();
   },
-  header:function(obj, assertion){
-    ensureResponse(obj);
-    expect(obj.response.headers, 'Response headers').to.exist;
-    expect(_.isArray(obj.response.headers), 'Response headers array').to.be.ok;
-    expect(obj.response.headers).to.have.length.above(0);
-    var header = _.chain(obj.response.headers).filter(function(h){
+  header:function(response, assertion){
+    ensureResponse(response);
+    expect(response.headers, 'Response headers').to.exist;
+    expect(_.isArray(response.headers), 'Response headers is array').to.be.ok;
+    expect(response.headers, 'Response Headers to have length').to.have.length.above(0);
+    var header = _.chain(response.headers).filter(function(h){
       return h[0] == assertion.value;
     }).first().value();
     expect(header, 'Selected header "'+assertion.value+'"').to.be.ok;
-    expect(_.isArray(obj.response.headers), 'Response headers array').to.be.ok;
+    expect(_.isArray(response.headers), 'Response headers array').to.be.ok;
     expect(header, 'Header').to.have.length.above(1);
     return header[1];
   },
-  body:function(obj, assertion){
-    ensureResponse(obj);
-    expect(obj.response.data, 'Response body').to.be.ok;
-    if(typeof obj.response.data === 'object'){
-      obj.response.data = JSON.stringify(obj.response.data);
+  body:function(response, assertion){
+    ensureResponse(response);
+    expect(response.data, 'Response body').to.be.ok;
+    if(typeof response.data === 'object'){
+      response.data = JSON.stringify(response.data);
     }
-    expect(obj.response.data, 'Response body').to.be.a('string');
-    return obj.response.data;
+    expect(response.data, 'Response body').to.be.a('string');
+    return response.data;
   }
 }
 
 
-function setup(obj){
+function ensureCheck(obj){
   expect(_, 'Lodash').to.exist;
 
   //setup Tests
@@ -142,40 +140,50 @@ function setup(obj){
   return true;
 }
 
-function runTests(obj){
-  var answers = [];
-  _.forEach(obj.assertions, function(assertion, index){
-    try{
-      var target = Tests[assertion.key].call(this, obj, assertion);
-      expect(target, 'Target').to.exist;
-      expect(target, 'Assertion target').to.be.a('string');
-      var test = assertion.operand;
-      var relationship = Relationships[assertion.relationship];
-      if(Relationships[assertion.relationship].requiresOperand){
-        expect(test, 'Assertion test').to.exist;
-        expect(test, 'Assertion test').to.be.a('string');
-      }
-      Relationships[assertion.relationship].fn.call(this, target, test);
-      answers.push({
-        success:true
-      });
-    }catch(err){
-      answers.push({
-        success:false,
-        error:JSON.stringify(err)
-      });
-    }
-  });
-  return {answers:answers};
-}
-
-module.exports = function(check){
+function runAssertion(response, assertion){
   try{
-    setup(check);
-    return runTests(check);
+    var target = Tests[assertion.key].call(this, response, assertion);
+    expect(target, 'Target').to.exist;
+    expect(target, 'Assertion target').to.be.a('string');
+    var test = assertion.operand;
+    var relationship = Relationships[assertion.relationship];
+    if(Relationships[assertion.relationship].requiresOperand){
+      expect(test, 'Assertion test').to.exist;
+      expect(test, 'Assertion test').to.be.a('string');
+    }
+    Relationships[assertion.relationship].fn.call(this, target, test);
+    return {
+      success:true
+    }
   }catch(err){
     return {
+      success:false,
       error:JSON.stringify(err)
+    }
+  }
+}
+
+module.exports = {
+  testCheck:function(check){
+    try{
+      ensureCheck(check);
+      return _.map(check.assertions, function(assertion){
+        return runAssertion(check.response, assertion);
+      });
+    }catch(err){
+      return {
+        error:JSON.stringify(err)
+      }
+    }
+  },
+  testAssertion:function(assertion){
+    try{
+      ensureCheck(check);
+      return runTests(check);
+    }catch(err){
+      return {
+        error:JSON.stringify(err)
+      }
     }
   }
 }

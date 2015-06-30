@@ -19,4 +19,4 @@ var env = process.env.NODE_ENV || 'development'
   exports = module.exports = app
 
   var example = require('./src/example');
-  console.log(slate(example));
+  console.log(slate.testCheck(example));
