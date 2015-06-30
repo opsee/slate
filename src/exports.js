@@ -1,2 +1,2 @@
-global._ = require('_');
-global.slate = require('speak');
+window._ = require('_');
+window.slate = require('speak');
