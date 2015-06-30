@@ -24,16 +24,58 @@ module.exports = {
     {
       key:'header',
       value:'content-type',
+      relationship:'contain',
+      operand:'json'
+    },
+    {
+      key:'header',
+      value:'content-type',
+      relationship:'contain',
+      operand:'json'
+    },
+    {
+      key:'header',
+      value:'content-type',
+      relationship:'notContain',
+      operand:'mp3'
+    },
+    {
+      key:'header',
+      value:'content-type',
       relationship:'notEqual',
       operand:'testingthis'
-    }
+    },
+    {
+      key:'body',
+      relationship:'notEmpty'
+    },
+    {
+      key:'body',
+      relationship:'notEqual',
+      operand:'foo'
+    },
+    {
+      key:'body',
+      relationship:'regExp',
+      operand:'^.*$'
+    },
+    {
+      key:'body',
+      relationship:'notEqual',
+      operand:'foo'
+    },
+    {
+      key:'body',
+      relationship:'contain',
+      operand:'$$$'
+    },
   ],
   response:{
       "data": [
         {
           "code": "100",
           "phrase": "Continue",
-          "description": "\"indicates that the initial part of a request has been received and has not yet been rejected by the server.\"",
+          "description": "\"indicates that the initial part of a request has been received and has not yet been rejected by the server $$$.\"",
         },
         {
           "code": "101",

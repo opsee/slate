@@ -4,62 +4,6 @@ var _ = require('lodash')
 , colors = require('colors')
 ;
 
-function test(assertion,res){
-    if(!assertion || !res || assertion.operand===null || !assertion.relationship.name){
-      return false;
-    }
-    var name = assertion.key.name;
-    var relationship = assertion.relationship.name;
-    switch(name){
-      case 'Status Code':
-        try{
-          var code = assertion.operand;
-          var status = res.status.toString();
-          return Relationships[relationship].call(this,status,code);
-        }catch(err){
-          return false;
-        }
-      break;
-      case 'Header':
-        try{
-          var name = typeof assertion.operand.name == 'object' ? assertion.operand.name[0] : assertion.operand.name;
-          var value = typeof assertion.operand.value == 'object' ? assertion.operand.value[1] : assertion.operand.value;
-          var header = _.chain(res.headers).filter(function(h){
-            return h[0] == name;
-          }).first().value();
-          if(relationship == 'Is Empty'){
-            if(!header){
-              return true;
-            }
-            return !header[1];
-          }else if(relationship == 'Is Not Empty'){
-            return !!header[1];
-          }
-          if(!header){
-            return false;
-          }
-          return Relationships[relationship].call(this,header[1],value);
-        }catch(err){
-          return false;
-        }
-      break;
-      case 'Response Body':
-      try{
-        var text = assertion.operand;
-        var body = JSON.stringify(res.data);
-        if(relationship == 'Is Empty'){
-          return !body;
-        }else if(relationship == 'Is Not Empty'){
-          return !!body;
-        }
-        return Relationships[relationship].call(this,body,text);
-      }catch(err){
-        return false;
-      }
-      break;
-    }
-  }
-
 var Relationships = {
   equal:{
     requiresOperand:true,
@@ -85,24 +29,25 @@ var Relationships = {
       expect(target, 'Assertion target').to.be.ok;
     }
   },
-  contains:{
+  contain:{
     requiresOperand:true,
     fn:function(target,test){
-      if(typeof target === 'string' && typeof test === 'string'){
-        target = target.toLowerCase();
-        test = test.toLowerCase();
-        return !!target.match(test);
-      }
-      return false;
+      test = new RegExp(_.escapeRegExp(test),'gi');
+      expect(target, 'Assertion target').to.match(test);
+    }
+  },
+  notContain:{
+    requiresOperand:true,
+    fn:function(target,test){
+      test = new RegExp(_.escapeRegExp(test),'gi');
+      expect(target, 'Assertion target').to.not.match(test);
     }
   },
   regExp:{
     requiresOperand:true,
     fn:function(target,test){
-      if(typeof target === 'string' && typeof test === 'string'){
-        return !!target.match(test);
-      }
-      return false;
+      test = new RegExp(test);
+      expect(target, 'Assertion target').to.match(test);
     }
   }
 }
@@ -133,7 +78,13 @@ var Tests = {
     return header[1];
   },
   body:function(obj, assertion){
-
+    ensureResponse(obj);
+    expect(obj.response.data, 'Response body').to.be.ok;
+    if(typeof obj.response.data === 'object'){
+      obj.response.data = JSON.stringify(obj.response.data);
+    }
+    expect(obj.response.data, 'Response body').to.be.a('string');
+    return obj.response.data;
   }
 }
 
@@ -170,18 +121,16 @@ function setup(obj){
 
   //loop through each assertion
   _.forEach(obj.assertions, function(assertion, index){
-    var keys = _.keys(Relationships);
-    var inc = _.includes(keys,assertion.relationship);
+    var inc = _.chain(Relationships).keys().includes(assertion.relationship).value();
     expect(inc, 'Unsupported check relationship "'+assertion.relationship+'"').to.be.ok;
     if(Relationships[assertion.relationship].requiresOperand){
       expect(assertion.operand, 'Assertion operand').to.exist;
+      if(typeof assertion.operand === 'number'){
+        assertion.operand = assertion.operand.toString();
+      }
+      expect(assertion.operand, 'Check assertion operand '+index+' test').to.be.a('string');
     }
-    if(typeof assertion.operand === 'number'){
-      assertion.operand = assertion.operand.toString();
-    }
-    expect(assertion.operand, 'Check assertion index '+index+' test').to.be.a('string');
-    var keys = _.keys(Tests);
-    var inc = _.includes(keys,assertion.key);
+    var inc = _.chain(Tests).keys().includes(assertion.key).value();
     expect(inc, 'Unsupported check assertion type "'+assertion.key+'"').to.be.ok;
   });
 
@@ -193,20 +142,18 @@ function setup(obj){
   return true;
 }
 
-function ensureArguments(target, test){
-  expect(target, 'Target').to.exist;
-  expect(target, 'Target').to.be.a('string');
-  expect(test, 'Test').to.exist;
-  expect(test, 'Test').to.be.a('string');
-}
-
 function runTests(obj){
   _.forEach(obj.assertions, function(assertion, index){
     try{
       var target = Tests[assertion.key].call(this, obj, assertion);
-      expect(target).to.be.a('string');
+      expect(target, 'Target').to.exist;
+      expect(target, 'Assertion target').to.be.a('string');
       var test = assertion.operand;
-      ensureArguments(target, test);
+      var relationship = Relationships[assertion.relationship];
+      if(Relationships[assertion.relationship].requiresOperand){
+        expect(test, 'Assertion test').to.exist;
+        expect(test, 'Assertion test').to.be.a('string');
+      }
       Relationships[assertion.relationship].fn.call(this, target, test);
       console.log(('Assertion #'+index+' pass.').green);
     }catch(err){
