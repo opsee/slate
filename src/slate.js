@@ -140,8 +140,15 @@ function ensureCheck(obj){
   return true;
 }
 
-function runAssertion(response, assertion){
+function runAssertion(obj){
   try{
+    expect(obj, 'runAssertion obj').to.be.ok;
+    expect(obj, 'runAssertion obj').to.be.an('object');
+    expect(obj, 'runAssertion obj').to.contain.all.keys(['response','assertion']);
+    var response = obj.response;
+    expect(response, 'runAssertion response').to.be.ok;
+    var assertion = obj.assertion;
+    expect(assertion, 'runAssertion assertion').to.be.ok;
     var target = Tests[assertion.key].call(this, response, assertion);
     expect(target, 'Target').to.exist;
     expect(target, 'Assertion target').to.be.a('string');
@@ -168,7 +175,7 @@ module.exports = {
     try{
       ensureCheck(check);
       return _.map(check.assertions, function(assertion){
-        return runAssertion(check.response, assertion);
+        return runAssertion({response:check.response, assertion:assertion});
       });
     }catch(err){
       return {
@@ -176,10 +183,9 @@ module.exports = {
       }
     }
   },
-  testAssertion:function(assertion){
+  testAssertion:function(obj){
     try{
-      ensureCheck(check);
-      return runTests(check);
+      return runAssertion(obj);
     }catch(err){
       return {
         error:JSON.stringify(err)

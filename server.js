@@ -19,4 +19,11 @@ var env = process.env.NODE_ENV || 'development'
   exports = module.exports = app
 
   var example = require('./src/example');
-  console.log(slate.testCheck(example));
+  var checkResult = slate.testCheck(example);
+  console.log(checkResult);
+  
+  var assertionResult = slate.testAssertion({
+    assertion:example.assertions[0],
+    response:example.response
+  })
+  console.log(assertionResult);
