@@ -121,13 +121,6 @@ function ensureCheck(obj){
   _.forEach(obj.assertions, function(assertion, index){
     var inc = _.chain(Relationships).keys().includes(assertion.relationship).value();
     expect(inc, 'Unsupported check relationship "'+assertion.relationship+'"').to.be.ok;
-    if(Relationships[assertion.relationship].requiresOperand){
-      expect(assertion.operand, 'Assertion operand').to.exist;
-      if(typeof assertion.operand === 'number'){
-        assertion.operand = assertion.operand.toString();
-      }
-      expect(assertion.operand, 'Check assertion operand '+index+' test').to.be.a('string');
-    }
     var inc = _.chain(Tests).keys().includes(assertion.key).value();
     expect(inc, 'Unsupported check assertion type "'+assertion.key+'"').to.be.ok;
   });
@@ -156,6 +149,9 @@ function runAssertion(obj){
     var relationship = Relationships[assertion.relationship];
     if(Relationships[assertion.relationship].requiresOperand){
       expect(test, 'Assertion test').to.exist;
+      if(typeof test === 'number'){
+        test = test.toString();
+      }
       expect(test, 'Assertion test').to.be.a('string');
     }
     Relationships[assertion.relationship].fn.call(this, target, test);
