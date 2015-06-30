@@ -2,7 +2,7 @@ var fs = require('fs')
   , express = require('express')
   , http = require('http')
   , logger = require('tracer').colorConsole()
-  , speak = require('./src/speak');
+  , slate = require('./src/slate');
 
 var env = process.env.NODE_ENV || 'development'
   , config = require('./config/config')[env]
@@ -18,4 +18,5 @@ var env = process.env.NODE_ENV || 'development'
   // expose app
   exports = module.exports = app
 
-  speak();
+  var example = require('./src/example');
+  console.log(slate(example));

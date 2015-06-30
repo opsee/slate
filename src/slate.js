@@ -143,6 +143,7 @@ function setup(obj){
 }
 
 function runTests(obj){
+  var answers = [];
   _.forEach(obj.assertions, function(assertion, index){
     try{
       var target = Tests[assertion.key].call(this, obj, assertion);
@@ -155,21 +156,26 @@ function runTests(obj){
         expect(test, 'Assertion test').to.be.a('string');
       }
       Relationships[assertion.relationship].fn.call(this, target, test);
-      console.log(('Assertion #'+index+' pass.').green);
+      answers.push({
+        success:true
+      });
     }catch(err){
-      console.log(('Assertion #'+index+' fail.').red);
-      console.log(err);
+      answers.push({
+        success:false,
+        error:JSON.stringify(err)
+      });
     }
-  })
+  });
+  return {answers:answers};
 }
 
-module.exports = function(){
-  var example = require('./example');
+module.exports = function(check){
   try{
-    setup(example);
-    runTests(example);
+    setup(check);
+    return runTests(check);
   }catch(err){
-    console.log(err);
-    console.log('Speak: Fail.'.red)
+    return {
+      error:JSON.stringify(err)
+    }
   }
 }
