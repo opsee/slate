@@ -65,15 +65,13 @@ var Tests = {
   header:function(response, assertion){
     ensureResponse(response);
     expect(response.headers, 'Response headers').to.exist;
-    expect(_.isArray(response.headers), 'Response headers is array').to.be.ok;
-    expect(response.headers, 'Response Headers to have length').to.have.length.above(0);
+    expect(response.headers, 'Response headers').to.be.an('object');
     var header = _.chain(response.headers).filter(function(h){
       return h[0] == assertion.value;
     }).first().value();
+    var header = response.headers[assertion.value];
     expect(header, 'Selected header "'+assertion.value+'"').to.be.ok;
-    expect(_.isArray(response.headers), 'Response headers array').to.be.ok;
-    expect(header, 'Header').to.have.length.above(1);
-    return header[1];
+    return header;
   },
   body:function(response, assertion){
     ensureResponse(response);

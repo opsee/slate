@@ -85,23 +85,11 @@ module.exports = {
       ],
       "status": 200,
       "statusText": "OK",
-      "headers": [
-        [
-          "date",
-          "Mon, 29 Jun 2015 17:49:21 GMT"
-        ],
-        [
-          "last-modified",
-          "Tue, 16 Jun 2015 17:15:06 GMT"
-        ],
-        [
-          "content-type",
-          "application/json"
-        ],
-        [
-          "cache-control",
-          "public, max-age=0"
-        ]
-      ],
+      "headers": {
+        "date": "Mon, 29 Jun 2015 17:49:21 GMT",
+        "last-modified": "Tue, 16 Jun 2015 17:15:06 GMT",
+        "content-type": "application/json",
+        "cache-control": "public, max-age=0"
+      }
   }
 }
