@@ -2,24 +2,15 @@ var logger = require('tracer').colorConsole()
 
 module.exports = function (app, passport){
 
-  app.all('/*', function(req, res) {
-    res.status(200).send('ok');
-  });
-
-  app.use(function(err, req, res, next){
-    // treat as 404
-    if (err && err.message && ~err.message.indexOf('not found')) return next();
-    // return index.render(req,res);
-    logger.log(err.message);
-    // log it
-    console.error(err.stack)
-    // error page
-    res.status(500).send({error:'500'});
+  app.get('/', function(req, res, next){
+    res.send({msg:'ok'});
+    next();
   })
 
-  // assume 404 since no middleware responded
-  app.use(function(req, res, next){
-    res.status(404).send({ url: req.originalUrl, error: 'Not found' });
+  app.post('/', function(req, res, next){
+    console.log(req);
+    res.send({msg:'ok'});
+    next();
   })
 
 }
