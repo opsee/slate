@@ -1,1 +1,1 @@
-module.exports = require('/src/slate');
+module.exports = require('./src/slate');
