@@ -35,12 +35,12 @@ module.exports = [
     id:'regExp'
   },
   {
-    name:'GreaterThan',
+    name:'Greater Than',
     title:'Greater than.',
     id:'greaterThan'
   },
   {
-    name:'LessThan',
+    name:'Less Than',
     title:'Less than.',
     id:'lessThan'
   }
