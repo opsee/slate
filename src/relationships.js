@@ -33,5 +33,15 @@ module.exports = [
     name:'RegExp',
     title:'^2 etc.',
     id:'regExp'
+  },
+  {
+    name:'GreaterThan',
+    title:'Greater than.',
+    id:'greaterThan'
+  },
+  {
+    name:'LessThan',
+    title:'Less than.',
+    id:'lessThan'
   }
 ]

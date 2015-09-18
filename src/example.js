@@ -69,6 +69,16 @@ module.exports = {
       relationship:'contain',
       operand:'$$$'
     },
+    {
+      key:'statusCode',
+      relationship:'greaterThan',
+      operand:199
+    },
+    {
+      key:'statusCode',
+      relationship:'lessThan',
+      operand:300
+    },
   ],
   response:{
       "data": [

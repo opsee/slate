@@ -49,6 +49,20 @@ var Relationships = {
       test = new RegExp(test);
       expect(target, 'Assertion target').to.match(test);
     }
+  },
+  greaterThan:{
+    requiresOperand:true,
+    fn:function(target, test){
+      expect(target, 'Assertion target').to.be.ok;
+      expect(target, 'Assertion target').to.be.above(test);
+    }
+  },
+  lessThan:{
+    requiresOperand:true,
+    fn:function(target, test){
+      expect(target, 'Assertion target').to.be.ok;
+      expect(target, 'Assertion target').to.be.below(test);
+    }
   }
 }
 
