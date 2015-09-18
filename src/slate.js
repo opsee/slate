@@ -53,14 +53,22 @@ var Relationships = {
   greaterThan:{
     requiresOperand:true,
     fn:function(target, test){
+      target = parseInt(target, 10);
+      test = parseInt(test, 10);
       expect(target, 'Assertion target').to.be.ok;
+      expect(target, 'Assertion target').to.be.a('number');
+      expect(test, 'Operand').to.be.a('number');
       expect(target, 'Assertion target').to.be.above(test);
     }
   },
   lessThan:{
     requiresOperand:true,
     fn:function(target, test){
+      target = parseInt(target, 10);
+      test = parseInt(test, 10);
       expect(target, 'Assertion target').to.be.ok;
+      expect(target, 'Assertion target').to.be.a('number');
+      expect(test, 'Operand').to.be.a('number');
       expect(target, 'Assertion target').to.be.below(test);
     }
   }
