@@ -179,6 +179,8 @@ function runAssertion(obj){
       success:true
     }
   }catch(err){
+    delete err.stack;
+    delete err.showDiff;
     return {
       success:false,
       error:JSON.stringify(err)
