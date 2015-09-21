@@ -80,29 +80,32 @@ function ensureResponse(response){
 }
 
 var Tests = {
-  statusCode:function(response){
+  code:function(response){
     ensureResponse(response);
-    return response.status.toString();
+    return response.code.toString();
   },
   header:function(response, assertion){
     ensureResponse(response);
     expect(response.headers, 'Response headers').to.exist;
-    expect(response.headers, 'Response headers').to.be.an('object');
-    var header = _.chain(response.headers).filter(function(h){
-      return h[0] == assertion.value;
-    }).first().value();
-    var header = response.headers[assertion.value];
+    expect(response.headers, 'Response headers').to.be.an('array');
+    var headers = response.headers.map(function(h){
+      h.name = h.name.toLowerCase();
+      return h;
+    });
+    var header = _.chain(response.headers).find({name:assertion.value}).get('values').value();
     expect(header, 'Selected header "'+assertion.value+'"').to.be.ok;
+    expect(header, 'Selected header "'+assertion.value+'"').to.be.an('array');
+    header = header.join(', ');
     return header;
   },
   body:function(response, assertion){
     ensureResponse(response);
-    expect(response.data, 'Response body').to.be.ok;
-    if(typeof response.data === 'object'){
-      response.data = JSON.stringify(response.data);
+    expect(response.body, 'Response body').to.be.ok;
+    if(typeof response.body === 'object'){
+      response.body = JSON.stringify(response.body);
     }
-    expect(response.data, 'Response body').to.be.a('string');
-    return response.data;
+    expect(response.body, 'Response body').to.be.a('string');
+    return response.body;
   }
 }
 
@@ -147,7 +150,7 @@ function ensureCheck(obj){
 
   //ensure response
   expect(obj.response, 'Check response').to.be.an('object');
-  expect(obj.response, 'Check response').to.contain.all.keys(['status','headers']);
+  expect(obj.response, 'Check response').to.contain.all.keys(['code','headers']);
 
   console.log('Speak: Pass.'.blue);
   return true;

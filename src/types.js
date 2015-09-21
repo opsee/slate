@@ -2,7 +2,7 @@ module.exports = [
   {
     name:'Status Code',
     title:'2XX-5XX',
-    id:'statusCode'
+    id:'code'
   },
   {
     name:'Header',

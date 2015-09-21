@@ -1,37 +1,37 @@
 module.exports = {
   assertions:[
     {
-      key:'statusCode',
+      key:'code',
       relationship:'equal',
       operand:200
     },
     {
-      key:'statusCode',
+      key:'code',
       relationship:'notEqual',
       operand:300
     },
     {
-      key:'statusCode',
+      key:'code',
       relationship:'notEmpty',
       operand:300
     },
     {
       key:'header',
-      value:'content-type',
+      value:'accept-encoding',
       relationship:'equal',
-      operand:'application/json'
+      operand:'gzip, deflate, sdch'
     },
     {
       key:'header',
       value:'content-type',
-      relationship:'contain',
-      operand:'json'
+      relationship:'notEqual',
+      operand:'text/html'
     },
     {
       key:'header',
       value:'content-type',
-      relationship:'contain',
-      operand:'json'
+      relationship:'regExp',
+      operand:'UTF-8$'
     },
     {
       key:'header',
@@ -57,7 +57,7 @@ module.exports = {
     {
       key:'body',
       relationship:'regExp',
-      operand:'^.*$'
+      operand:'k$'
     },
     {
       key:'body',
@@ -67,39 +67,61 @@ module.exports = {
     {
       key:'body',
       relationship:'contain',
-      operand:'$$$'
+      operand:'A ok'
     },
     {
-      key:'statusCode',
+      key:'code',
       relationship:'greaterThan',
       operand:199
     },
     {
-      key:'statusCode',
+      key:'code',
       relationship:'lessThan',
       operand:300
     },
   ],
-  response:{
-      "data": [
-        {
-          "code": "100",
-          "phrase": "Continue",
-          "description": "\"indicates that the initial part of a request has been received and has not yet been rejected by the server $$$.\"",
-        },
-        {
-          "code": "101",
-          "phrase": "Switching Protocols",
-          "description": "\"indicates that the server understands and is willing to comply with the client's request, via the Upgrade header field, for a change in the application protocol being used on this connection.\"",
-        },
-      ],
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "date": "Mon, 29 Jun 2015 17:49:21 GMT",
-        "last-modified": "Tue, 16 Jun 2015 17:15:06 GMT",
-        "content-type": "application/json",
-        "cache-control": "public, max-age=0"
+  "response": {
+    "code": 200,
+    "body": "A ok",
+    "headers": [
+      {
+        "name": "Content-Type",
+        "values": [
+          "text/html; charset=UTF-8"
+        ]
+      },
+      {
+        "name": "Accept-Encoding",
+        "values":[
+          "gzip",
+          "deflate",
+          "sdch"
+        ]
+      },
+      {
+        "name": "Vary",
+        "values": [
+          "origin"
+        ]
+      },
+      {
+        "name": "Content-Length",
+        "values": [
+          "4"
+        ]
+      },
+      {
+        "name": "Server",
+        "values": [
+          "Jetty(9.2.z-SNAPSHOT)"
+        ]
       }
+    ],
+    "metrics": [
+      {
+        "name": "request_latency_ms",
+        "value": 80.84540600000001
+      }
+    ]
   }
 }
