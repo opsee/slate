@@ -93,9 +93,9 @@ var Tests = {
       return h;
     });
     var header = _.chain(response.headers).find({name:assertion.value}).get('values').value();
-    expect(header, 'Selected header "'+assertion.value+'"').to.be.ok;
-    expect(header, 'Selected header "'+assertion.value+'"').to.be.an('array');
-    header = header.join(', ');
+    if(Array.isArray(header)){
+      header = header.join(', ');
+    }
     return header;
   },
   body:function(response, assertion){
