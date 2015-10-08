@@ -152,7 +152,6 @@ function ensureCheck(obj){
   expect(obj.response, 'Check response').to.be.an('object');
   expect(obj.response, 'Check response').to.contain.all.keys(['code','headers']);
 
-  console.log('Speak: Pass.'.blue);
   return true;
 }
 
@@ -212,5 +211,10 @@ module.exports = {
         error:JSON.stringify(err)
       }
     }
-  }
+  },
+  runAssertion:function(assertion, response) {
+    var result = runAssertion({response: response, assertion: assertion});
+    console.log(result);
+    return result.success;
+  },
 }
