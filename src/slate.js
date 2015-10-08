@@ -214,7 +214,6 @@ module.exports = {
   },
   runAssertion:function(assertion, response) {
     var result = runAssertion({response: response, assertion: assertion});
-    console.log(result);
     return result.success;
   },
 }
