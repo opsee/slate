@@ -131,7 +131,6 @@ module.exports = function(assertion, response){
 
     expect(response, 'runAssertion response').to.be.ok;
     expect(response, 'Check response').to.be.an('object');
-    expect(response, 'Check response').to.contain.all.keys(['code','headers']);
 
     var target = Tests[assertion.key].call(this, response, assertion);
     expect(target, 'Target').to.exist;
