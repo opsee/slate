@@ -109,10 +109,30 @@ var Tests = {
   }
 }
 
-function runAssertion(assertion, response){
+module.exports = function(assertion, response){
   try{
-    expect(response, 'runAssertion response').to.be.ok;
+    //setup Relationships
+    expect(Relationships, 'Relationships').to.exist;
+    expect(Relationships, 'Relationships').to.be.an('object');
+    var keys = _.keys(Relationships);
+    expect(keys, 'Relationships keys').to.exist;
+    expect(keys, 'Relationships keys').to.have.length.above(0);
+    _.forEach(Relationships, function(relationship){
+      expect(relationship, 'Relationship').to.be.an('object');
+      expect(relationship, 'Relationship').to.contain.all.keys(['requiresOperand', 'fn']);
+    });
+
+    //ensure assertion
     expect(assertion, 'runAssertion assertion').to.be.ok;
+    var inc = _.chain(Relationships).keys().includes(assertion.relationship).value();
+    expect(inc, 'Unsupported check relationship "'+assertion.relationship+'"').to.be.ok;
+    var inc = _.chain(Tests).keys().includes(assertion.key).value();
+    expect(inc, 'Unsupported check assertion type "'+assertion.key+'"').to.be.ok;
+
+    expect(response, 'runAssertion response').to.be.ok;
+    expect(response, 'Check response').to.be.an('object');
+    expect(response, 'Check response').to.contain.all.keys(['code','headers']);
+
     var target = Tests[assertion.key].call(this, response, assertion);
     expect(target, 'Target').to.exist;
     expect(target, 'Assertion target').to.be.a('string');
@@ -138,5 +158,3 @@ function runAssertion(assertion, response){
     }
   }
 }
-
-module.exports.runAssertion=runAssertion;

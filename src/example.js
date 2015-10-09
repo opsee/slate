@@ -3,17 +3,17 @@ module.exports = {
     {
       key:'code',
       relationship:'equal',
-      operand:200
+      operand:'200'
     },
     {
       key:'code',
       relationship:'notEqual',
-      operand:300
+      operand:'300'
     },
     {
       key:'code',
       relationship:'notEmpty',
-      operand:300
+      operand:'300'
     },
     {
       key:'header',
@@ -72,12 +72,12 @@ module.exports = {
     {
       key:'code',
       relationship:'greaterThan',
-      operand:199
+      operand:'199'
     },
     {
       key:'code',
       relationship:'lessThan',
-      operand:300
+      operand:'300'
     },
   ],
   "response": {

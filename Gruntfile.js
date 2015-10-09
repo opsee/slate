@@ -6,12 +6,12 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     nodemon:{
       server:{
-        script:'server.js',
+        script:'run.js',
         options:{
           env:{
             PORT:'7000'
           },
-          watch:['server.js','src','config'],
+          watch:['run.js','src','config'],
           ext:'js,html',
         }
       },
@@ -21,7 +21,7 @@ module.exports = function(grunt) {
           env:{
             PORT:'7000'
           },
-          watch:['server.js','src','config'],
+          watch:['run.js','src','config'],
           ext:'js,html',
         }
       },
