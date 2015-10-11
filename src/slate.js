@@ -1,7 +1,6 @@
 var _ = require('lodash')
 , chai = require ('chai')
 , expect = chai.expect
-, colors = require('colors')
 ;
 
 var Relationships = {
