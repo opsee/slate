@@ -87,10 +87,6 @@ var Tests = {
     ensureResponse(response);
     expect(response.headers, 'Response headers').to.exist;
     expect(response.headers, 'Response headers').to.be.an('array');
-    var headers = response.headers.map(function(h){
-      h.name = h.name.toLowerCase();
-      return h;
-    });
     var header = _.chain(response.headers).find({name:assertion.value}).get('values').value();
     if(Array.isArray(header)){
       header = header.join(', ');
