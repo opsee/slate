@@ -17,31 +17,31 @@ module.exports = {
     },
     {
       key:'header',
-      value:'accept-encoding',
+      value:'Accept-Encoding',
       relationship:'equal',
       operand:'gzip, deflate, sdch'
     },
     {
       key:'header',
-      value:'content-type',
+      value:'Content-Type',
       relationship:'notEqual',
       operand:'text/html'
     },
     {
       key:'header',
-      value:'content-type',
+      value:'Content-Type',
       relationship:'regExp',
       operand:'UTF-8$'
     },
     {
       key:'header',
-      value:'content-type',
+      value:'Content-Type',
       relationship:'notContain',
       operand:'mp3'
     },
     {
       key:'header',
-      value:'content-type',
+      value:'Content-Type',
       relationship:'notEqual',
       operand:'testingthis'
     },
@@ -78,6 +78,11 @@ module.exports = {
       key:'code',
       relationship:'lessThan',
       operand:'300'
+    },
+    {
+      key:'header',
+      relationship:'notEmpty',
+      operand:'Content-Type'
     },
   ],
   "response": {
