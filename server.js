@@ -1,8 +1,10 @@
-var logger = require('bunyan');
-var restify = require('restify');
-var slate = require('./src/slate');
+'use strict';
 
-var log = new logger({
+const logger = require('bunyan');
+const restify = require('restify');
+const slate = require('./src/slate');
+
+const log = new logger({
   name: 'slate',
   streams: [
     {
@@ -14,9 +16,9 @@ var log = new logger({
 });
 
 function respond(req, res, next) {
-  if (req.method == 'POST') {
-    var body = '';
-    req.on('data', function (data) {
+  if (req.method === 'POST') {
+    let body = '';
+    req.on('data', function onData(data) {
       body += data;
       // limit request size to 1MB.
       if (body.length > 1e6) {
@@ -25,31 +27,31 @@ function respond(req, res, next) {
       }
     });
 
-    req.on('end', function () {
-      var check = JSON.parse(body);
-      var slateResp = null;
-      var err = null;
+    req.on('end', function onEnd() {
+      const check = JSON.parse(body);
+      let slateResp = null;
+      let err = null;
       log.debug('check = ' + JSON.stringify(check));
-      
-      for (var i = 0; i < check.assertions.length; i++) {
-        var assertion = check.assertions[i];
+
+      for (let i = 0; i < check.assertions.length; i++) {
+        let assertion = check.assertions[i];
         log.debug('running assertion: ' + JSON.stringify(assertion));
-        
+
         err = slate.validateAssertion(assertion);
         if (err) {
           log.debug('validateResponse returned error: ' + JSON.stringify(err));
           break;
         }
-        
+
         slateResp = slate.checkAssertion(assertion, check.response);
-        if (slateResp.error != null) {
+        if (slateResp.error) {
           log.debug('checkAssertion returned error: ' + JSON.stringify(slateResp));
           break;
         }
       }
-      
+
       if (err) {
-        res.send(400, { "error": err });
+        res.send(400, { 'error': err });
       } else {
         res.send(200, slateResp);
       }
@@ -60,21 +62,21 @@ function respond(req, res, next) {
   next();
 }
 
-var server = restify.createServer({
+let server = restify.createServer({
   name: 'slate',
   log: log
 });
 server.post('/check', respond);
 
-server.pre(function (request, response, next) {
-    request.log.info({req: request}, 'start');
-      return next();
+server.pre(function restifyServerPre(request, response, next) {
+  request.log.info({req: request}, 'start');
+  return next();
 });
 
-server.on('after', function (req, res, route) {
-    req.log.info({res: res}, 'finished');
+server.on('after', function restifyServerOnAfter(req, res) {
+  req.log.info({res: res}, 'finished');
 });
 
-server.listen(7000, function() {
+server.listen(7000, function restifyServerListen() {
   console.log('%s listening at %s', server.name, server.url);
-})
+});

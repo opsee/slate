@@ -4,7 +4,11 @@
   "description": "Check assertion processor",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "./node_modules/eslint/bin/eslint.js --max-warnings 0 *.js",
+    "docker-build": "docker build -t quay.io/opsee/slate:latest .",
+    "docker-run": "docker run -d -p 7000:7000 quay.io/opsee/slate:latest; sleep 10",
+    "start": "grunt"
   },
   "repository": {
     "type": "git",
@@ -15,11 +19,9 @@
   "bugs": {
     "url": "https://github.com/opsee/slate/issues"
   },
-  "scripts": {
-    "start": "grunt"
-  },
   "homepage": "https://github.com/opsee/slate#readme",
   "devDependencies":{
+    "eslint": "^1.10.3",
     "grunt": "^0.4.5",
     "grunt-nodemon": "^0.4.0",
     "load-grunt-tasks": "^3.2.0",
