@@ -23,13 +23,6 @@
   },
   "rules": {
 /**
- * Strict mode
- */
-    // babel inserts "use strict"; for us
-    // http://eslint.org/docs/rules/strict
-    "strict": [1, "never"],
-
-/**
  * ES6
  */
     "no-var": 1,                     // http://eslint.org/docs/rules/no-var
