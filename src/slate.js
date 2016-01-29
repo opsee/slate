@@ -79,21 +79,28 @@ function ensureResponse(response){
 }
 
 var Tests = {
-  code:function(response){
+  code: function(response){
     ensureResponse(response);
     return response.code.toString();
   },
-  header:function(response, assertion){
+  
+  header: function(response, assertion){
     ensureResponse(response);
     expect(response.headers, 'Response headers').to.exist;
     expect(response.headers, 'Response headers').to.be.an('array');
-    var header = _.chain(response.headers).find({name:assertion.value}).get('values').value();
+    var header = _.chain(response.headers)
+      .find(function(o) {
+        return o.name.toLowerCase() == assertion.value.toLowerCase();
+      })
+      .get('values')
+      .value();
     if(Array.isArray(header)){
       header = header.join(', ');
     }
     return header;
   },
-  body:function(response, assertion){
+  
+  body: function(response, assertion){
     ensureResponse(response);
     expect(response.body, 'Response body').to.be.ok;
     if(typeof response.body === 'object'){
@@ -104,51 +111,63 @@ var Tests = {
   }
 }
 
-module.exports = function(assertion, response){
-  try{
-    //setup Relationships
-    expect(Relationships, 'Relationships').to.exist;
-    expect(Relationships, 'Relationships').to.be.an('object');
-    var keys = _.keys(Relationships);
-    expect(keys, 'Relationships keys').to.exist;
-    expect(keys, 'Relationships keys').to.have.length.above(0);
-    _.forEach(Relationships, function(relationship){
-      expect(relationship, 'Relationship').to.be.an('object');
-      expect(relationship, 'Relationship').to.contain.all.keys(['requiresOperand', 'fn']);
-    });
+module.exports = {
+  validateAssertion: function(assertion) {
+    if (assertion == null) {
+      return 'Received null assertion.';
+    }
 
-    //ensure assertion
-    expect(assertion, 'runAssertion assertion').to.be.ok;
-    var inc = _.chain(Relationships).keys().includes(assertion.relationship).value();
-    expect(inc, 'Unsupported check relationship "'+assertion.relationship+'"').to.be.ok;
-    var inc = _.chain(Tests).keys().includes(assertion.key).value();
-    expect(inc, 'Unsupported check assertion type "'+assertion.key+'"').to.be.ok;
+    if (!(assertion.relationship in Relationships)) {
+      return 'Unsupported check relationship ' + assertion.relationship;
+    }
 
-    expect(response, 'runAssertion response').to.be.ok;
-    expect(response, 'Check response').to.be.an('object');
+    if (!(assertion.key in Tests)) {
+      return 'Invalid key in assertion: ' + assertion.key;
+    }
 
-    var target = Tests[assertion.key].call(this, response, assertion);
-    expect(target, 'Target').to.exist;
-    expect(target, 'Assertion target').to.be.a('string');
-    var test = assertion.operand;
-    var relationship = Relationships[assertion.relationship];
-    if(Relationships[assertion.relationship].requiresOperand){
-      expect(test, 'Assertion test').to.exist;
-      if(typeof test === 'number'){
-        test = test.toString();
+    return null;
+  },
+
+  checkAssertion: function(assertion, response) {
+    try {
+      //setup Relationships
+      expect(Relationships, 'Relationships').to.exist;
+      expect(Relationships, 'Relationships').to.be.an('object');
+      var keys = _.keys(Relationships);
+      expect(keys, 'Relationships keys').to.exist;
+      expect(keys, 'Relationships keys').to.have.length.above(0);
+      _.forEach(Relationships, function(relationship){
+        expect(relationship, 'Relationship').to.be.an('object');
+        expect(relationship, 'Relationship').to.contain.all.keys(['requiresOperand', 'fn']);
+      });
+
+
+      expect(response, 'runAssertion response').to.be.ok;
+      expect(response, 'Check response').to.be.an('object');
+
+      var target = Tests[assertion.key].call(this, response, assertion);
+      expect(target, 'Target').to.exist;
+      expect(target, 'Assertion target').to.be.a('string');
+      var test = assertion.operand;
+      var relationship = Relationships[assertion.relationship];
+      if(Relationships[assertion.relationship].requiresOperand){
+        expect(test, 'Assertion test').to.exist;
+        if(typeof test === 'number'){
+          test = test.toString();
+        }
+        expect(test, 'Assertion test').to.be.a('string');
       }
-      expect(test, 'Assertion test').to.be.a('string');
+      Relationships[assertion.relationship].fn.call(this, target, test);
+      return {
+        success:true
+      }
+    } catch(err) {
+      delete err.stack;
+      delete err.showDiff;
+      return {
+        success:false,
+        error:JSON.stringify(err)
+      }
     }
-    Relationships[assertion.relationship].fn.call(this, target, test);
-    return {
-      success:true
-    }
-  }catch(err){
-    delete err.stack;
-    delete err.showDiff;
-    return {
-      success:false,
-      error:JSON.stringify(err)
-    }
-  }
+  },
 }
