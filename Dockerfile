@@ -6,4 +6,4 @@ COPY . /usr/src/app
 RUN npm install && \
     npm install -g bower grunt-cli
 
-CMD node server.js
+CMD node --max_old_space_size=128 server.js
