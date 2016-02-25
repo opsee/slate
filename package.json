@@ -4,8 +4,8 @@
   "description": "Check assertion processor",
   "main": "index.js",
   "scripts": {
-    "test": "node run",
     "lint": "./node_modules/eslint/bin/eslint.js --max-warnings 0 *.js",
+    "test": "node test/index.js",
     "docker-build": "docker build -t quay.io/opsee/slate:latest .",
     "docker-run": "docker run -d -p 7000:7000 quay.io/opsee/slate:latest; sleep 10",
     "start": "grunt"
