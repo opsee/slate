@@ -31,7 +31,7 @@ module.exports = {
       key: 'header',
       value: 'Content-Type',
       relationship: 'regExp',
-      operand: 'UTF-8$'
+      operand: '^application/json$'
     },
     {
       key: 'header',
@@ -57,7 +57,7 @@ module.exports = {
     {
       key: 'body',
       relationship: 'regExp',
-      operand: 'k$'
+      operand: '^\{'
     },
     {
       key: 'body',
@@ -67,7 +67,7 @@ module.exports = {
     {
       key: 'body',
       relationship: 'contain',
-      operand: 'A ok'
+      operand: 'SSLCert'
     },
     {
       key: 'code',
@@ -83,16 +83,46 @@ module.exports = {
       key:'header',
       relationship:'notEmpty',
       value:'Content-Type'
-    }
+    },
+    {
+      key:'header',
+      relationship: 'contain',
+      value: 'Content-Type',
+      operand: 'application/json'
+    },
+    {
+      key:'header',
+      relationship: 'contain',
+      value: 'Accept-Encoding',
+      operand: 'deflate'
+    },
+    {
+      key:'json',
+      relationship: 'equal',
+      value: 'Instances[0].InstanceId',
+      operand: 'i-1697eea4'
+    },
+    {
+      key:'json',
+      relationship: 'equal',
+      value: 'HealthCheck.Interval',
+      operand: 30
+    },
+    {
+      key:'json',
+      relationship: 'lessThan',
+      value: 'HealthCheck.Interval',
+      operand: 40
+    },
   ],
   'response': {
     'code': 200,
-    'body': 'A ok',
+    'body': '{"Instances":[{"InstanceId":"i-1697eea4"}],"Subnets":["subnet-0378a966","subnet-eccedfaa"],"DNSName":"postato-1254052096.us-west-1.elb.amazonaws.com","VPCId":"vpc-79b1491c","LoadBalancerName":"postato","CanonicalHostedZoneName":"postato-1254052096.us-west-1.elb.amazonaws.com","SourceSecurityGroup":{"GroupName":"default","OwnerAlias":"933693344490"},"AvailabilityZones":["us-west-1a","us-west-1c"],"HealthCheck":{"Target":"HTTPS:8000/index.html","Timeout":5,"Interval":30,"HealthyThreshold":10,"UnhealthyThreshold":2},"SecurityGroups":["sg-1227fa77"],"ListenerDescriptions":[{"Listener":{"Protocol":"HTTPS","InstancePort":80,"InstanceProtocol":"HTTP","LoadBalancerPort":443,"SSLCertificateId":"arn:aws:iam::933693344490:server-certificate/InOpseeComWildcard"},"PolicyNames":["AWSConsole-SSLNegotiationPolicy-postato-1454712422460"]}],"CreatedTime":"2016-02-05T22:47:01.51Z","Scheme":"internet-facing","CanonicalHostedZoneNameID":"Z1M58G0W56PQJA"}',
     'headers': [
       {
         'name': 'Content-Type',
         'values': [
-          'text/html; charset=UTF-8'
+          'application/json'
         ]
       },
       {

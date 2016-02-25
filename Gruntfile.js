@@ -15,17 +15,18 @@ module.exports = function setupGrunt(grunt) {
         }
       },
       test: {
-        script: 'src/process.js',
+        script: 'test/index.js',
         options: {
           env: {
             PORT: '7000'
           },
-          watch: ['server.js', 'src', 'config'],
+          watch: ['src', 'config', 'test'],
           ext: 'js,html'
         }
       }
     }
   });
 
-  grunt.registerTask('default', ['nodemon']);
+  grunt.registerTask('default', ['nodemon:server']);
+  grunt.registerTask('test', ['nodemon:test']);
 };
