@@ -1,6 +1,7 @@
 var _ = require('lodash')
 , chai = require ('chai')
 , expect = chai.expect
+, jspath = require('jspath')
 ;
 
 var Relationships = {
@@ -83,7 +84,6 @@ var Tests = {
     ensureResponse(response);
     return response.code.toString();
   },
-  
   header: function(response, assertion){
     ensureResponse(response);
     expect(response.headers, 'Response headers').to.exist;
@@ -99,7 +99,6 @@ var Tests = {
     }
     return header;
   },
-  
   body: function(response, assertion){
     ensureResponse(response);
     expect(response.body, 'Response body').to.be.ok;
@@ -108,6 +107,36 @@ var Tests = {
     }
     expect(response.body, 'Response body').to.be.a('string');
     return response.body;
+  },
+  json: function(response, assertion){
+    ensureResponse(response);
+    expect(response.body, 'Response.body').to.be.ok;
+    expect(response.body, 'Response.body').to.be.a('string');
+    var data;
+    try {
+      data = JSON.parse(response.body);
+    } catch(err){}
+    expect(data, 'Parsed JSON').to.be.ok;
+    expect(data, 'Parsed JSON').to.be.an('object');
+    var val = assertion.value;
+    //ensure that users do not have to begin their assertion with a dot
+    if (!val.match('^\\.')){
+      val = '.' + val;
+    }
+    var dataValue = jspath.apply(val, data);
+    //jspath returns an array when regular js obj notation would not, so coerce to single value here
+    if (dataValue && Array.isArray(dataValue) && dataValue.length === 1){
+      dataValue = dataValue[0];
+    }
+    //need to convert to string here to conform to other tests
+    if (typeof dataValue === 'number'){
+      dataValue = dataValue.toString();
+    }
+    var dataPathType = typeof dataValue;
+    var isStringOrNumber = dataPathType.match('^string$');
+    //ensure that we have the real deal
+    expect(isStringOrNumber, 'typeof jspath result is string or number').to.be.ok;
+    return dataValue;
   }
 }
 
@@ -147,7 +176,7 @@ module.exports = {
 
       var target = Tests[assertion.key].call(this, response, assertion);
       expect(target, 'Target').to.exist;
-      expect(target, 'Assertion target').to.be.a('string');
+      // expect(target, 'Assertion target').to.be.a('string');
       var test = assertion.operand;
       var relationship = Relationships[assertion.relationship];
       if(Relationships[assertion.relationship].requiresOperand){

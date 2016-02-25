@@ -1,11 +1,11 @@
 {
   "name": "slate",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Check assertion processor",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "./node_modules/eslint/bin/eslint.js --max-warnings 0 *.js",
+    "test": "node test/index.js",
     "docker-build": "docker build -t quay.io/opsee/slate:latest .",
     "docker-run": "docker run -d -p 7000:7000 quay.io/opsee/slate:latest; sleep 10",
     "start": "grunt"
@@ -20,7 +20,7 @@
     "url": "https://github.com/opsee/slate/issues"
   },
   "homepage": "https://github.com/opsee/slate#readme",
-  "devDependencies":{
+  "devDependencies": {
     "eslint": "^1.10.3",
     "grunt": "^0.4.5",
     "grunt-nodemon": "^0.4.0",
@@ -32,6 +32,7 @@
     "bunyan": "^1.5.1",
     "chai": "^3.0.0",
     "chai-things": "^0.2.0",
+    "jspath": "^0.3.2",
     "lodash": "^4.0.0",
     "restify": "^4.0.3"
   }

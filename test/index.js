@@ -1,10 +1,19 @@
-var should = require('chai').should()
-, scapegoat = require('../index')
-, log = scapegoat.log
+var chai = require('chai')
+, expect = chai.expect
+, _ = require('lodash')
 ;
 
-describe('#log', function(){
-  it('logs to console', function(){
-    log().should.equal('f');
-  })
+const slate = require('../src/slate');
+const example = require('./example');
+
+const assertionsArray = example.assertions.map(assertion => {
+  return slate.checkAssertion(assertion, example.response);
 });
+
+const errs = _.filter(assertionsArray, {success: false});
+if (errs.length){
+  console.log('Errors found.');
+  console.log(errs);
+  return process.exit(1);
+}
+return console.log('No Errors.');
