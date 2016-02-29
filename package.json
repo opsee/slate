@@ -32,7 +32,6 @@
     "bunyan": "^1.5.1",
     "chai": "^3.0.0",
     "chai-things": "^0.2.0",
-    "jspath": "^0.3.2",
     "lodash": "^4.0.0",
     "restify": "^4.0.3"
   }

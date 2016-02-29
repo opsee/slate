@@ -1,7 +1,6 @@
 var _ = require('lodash')
 , chai = require ('chai')
 , expect = chai.expect
-, jspath = require('jspath')
 ;
 
 var Relationships = {
@@ -118,24 +117,14 @@ var Tests = {
     } catch(err){}
     expect(data, 'Parsed JSON').to.be.ok;
     expect(data, 'Parsed JSON').to.be.an('object');
-    var val = assertion.value;
-    //ensure that users do not have to begin their assertion with a dot
-    if (!val.match('^\\.')){
-      val = '.' + val;
-    }
-    var dataValue = jspath.apply(val, data);
-    //jspath returns an array when regular js obj notation would not, so coerce to single value here
-    if (dataValue && Array.isArray(dataValue) && dataValue.length === 1){
-      dataValue = dataValue[0];
-    }
+    var dataValue = _.get(data, assertion.value);
     //need to convert to string here to conform to other tests
-    if (typeof dataValue === 'number'){
-      dataValue = dataValue.toString();
+    if (dataValue && typeof dataValue !== 'string'){
+      try {
+        dataValue = JSON.stringify(dataValue);
+      } catch(err){}
     }
-    var dataPathType = typeof dataValue;
-    var isStringOrNumber = dataPathType.match('^string$');
-    //ensure that we have the real deal
-    expect(isStringOrNumber, 'typeof jspath result is string or number').to.be.ok;
+    expect(typeof dataValue, 'typeof json result').to.equal('string');
     return dataValue;
   }
 }
