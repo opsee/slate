@@ -7,8 +7,7 @@ COPY index.js /slate/
 COPY server.js /slate/
 COPY src /slate/src/
 RUN cd /slate  && \
-    npm install && \
-    npm install -g bower grunt-cli
+    npm install --production
 
 EXPOSE 7000
 WORKDIR /slate
