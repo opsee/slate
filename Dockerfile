@@ -1,11 +1,13 @@
 FROM mhart/alpine-node:5.7
 
+ENV NODE_ENV production
+
 COPY package.json /slate/
 COPY index.js /slate/
 COPY server.js /slate/
 COPY src /slate/src/
 RUN cd /slate  && \
-    npm install --production
+    npm install
 
 EXPOSE 7000
 WORKDIR /slate
