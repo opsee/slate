@@ -1,9 +1,15 @@
-FROM node:5.4.1
-EXPOSE 7000
+FROM gliderlabs/alpine:3.3
 
-WORKDIR /usr/src/app
-COPY . /usr/src/app
-RUN npm install && \
+RUN apk add --update nodejs
+
+COPY package.json /slate/
+COPY index.js /slate/
+COPY server.js /slate/
+COPY src /slate/src/
+RUN cd /slate  && \
+    npm install && \
     npm install -g bower grunt-cli
 
+EXPOSE 7000
+WORKDIR /slate
 CMD node --max_old_space_size=128 server.js
