@@ -1,6 +1,4 @@
-FROM gliderlabs/alpine:3.3
-
-RUN apk add --update nodejs
+FROM mhart/alpine-node:5.7
 
 COPY package.json /slate/
 COPY index.js /slate/
