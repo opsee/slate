@@ -116,7 +116,6 @@ var Tests = {
       data = JSON.parse(response.body);
     } catch(err){}
     expect(data, 'Parsed JSON').to.be.ok;
-    expect(data, 'Parsed JSON').to.be.an('object');
     //use entire body if value is not present
     var dataValue = data;
     //otherwise try to select some data
