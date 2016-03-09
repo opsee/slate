@@ -116,8 +116,12 @@ var Tests = {
       data = JSON.parse(response.body);
     } catch(err){}
     expect(data, 'Parsed JSON').to.be.ok;
-    expect(data, 'Parsed JSON').to.be.an('object');
-    var dataValue = _.get(data, assertion.value);
+    //use entire body if value is not present
+    var dataValue = data;
+    //otherwise try to select some data
+    if (assertion.value){
+      dataValue = _.get(data, assertion.value)
+    }
     //need to convert to string here to conform to other tests
     if (dataValue && typeof dataValue !== 'string'){
       try {
