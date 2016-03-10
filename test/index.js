@@ -1,3 +1,5 @@
+var start = process.hrtime();
+
 var chai = require('chai')
 , expect = chai.expect
 , _ = require('lodash')
@@ -16,4 +18,7 @@ if (errs.length){
   console.log(errs);
   return process.exit(1);
 }
+
+var end = process.hrtime(start);
+console.info("Execution time (hr): %ds %dms", end[0], end[1]/1000000);
 return console.log('No Errors.');
