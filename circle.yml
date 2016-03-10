@@ -10,8 +10,7 @@ machine:
     version: 5.4
 test:
   override:
-    - npm run docker-build
-    - npm run docker-run
+    - docker build -t quay.io/opsee/slate:$CIRCLE_SHA1 .
     - npm run lint
 deployment:
   hub:
@@ -19,4 +18,4 @@ deployment:
     owner: opsee
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS quay.io
-      - docker push quay.io/opsee/slate:latest
+      - docker push quay.io/opsee/slate:$CIRCLE_SHA1
