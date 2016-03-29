@@ -2,7 +2,7 @@ dependencies:
   override:
     - npm install -g eslint
     - npm install
-    - docker info
+    - docker version
 machine:
   services:
     - docker
@@ -10,12 +10,11 @@ machine:
     version: 5.4
 test:
   override:
-    - docker build -t quay.io/opsee/slate:$CIRCLE_SHA1 .
-    - npm run lint
+    - make
 deployment:
   hub:
     branch: master
     owner: opsee
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS quay.io
-      - docker push quay.io/opsee/slate:$CIRCLE_SHA1
+      - make docker-push

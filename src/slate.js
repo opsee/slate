@@ -83,6 +83,7 @@ var Tests = {
     ensureResponse(response);
     return response.code.toString();
   },
+
   header: function(response, assertion){
     ensureResponse(response);
     expect(response.headers, 'Response headers').to.exist;
@@ -98,6 +99,7 @@ var Tests = {
     }
     return header;
   },
+
   body: function(response, assertion){
     ensureResponse(response);
     expect(response.body, 'Response body').to.be.ok;
@@ -107,6 +109,7 @@ var Tests = {
     expect(response.body, 'Response body').to.be.a('string');
     return response.body;
   },
+
   json: function(response, assertion){
     ensureResponse(response);
     expect(response.body, 'Response.body').to.be.ok;
@@ -130,6 +133,11 @@ var Tests = {
     }
     expect(typeof dataValue, 'typeof json result').to.equal('string');
     return dataValue;
+  },
+  cloudwatch: function(response, assertion){
+    expect(response.metrics, 'Cloudwatch metrics').to.exist;
+    expect(response.metrics, 'Cloudwatch metrics').to.be.an('array');
+    return response.metrics;
   }
 }
 
@@ -151,6 +159,7 @@ module.exports = {
   },
 
   checkAssertion: function(assertion, response) {
+
     try {
       //setup Relationships
       expect(Relationships, 'Relationships').to.exist;
@@ -163,12 +172,22 @@ module.exports = {
         expect(relationship, 'Relationship').to.contain.all.keys(['requiresOperand', 'fn']);
       });
 
-
       expect(response, 'runAssertion response').to.be.ok;
       expect(response, 'Check response').to.be.an('object');
 
-      var target = Tests[assertion.key].call(this, response, assertion);
+    var target = Tests[assertion.key].call(this, response, assertion);
       expect(target, 'Target').to.exist;
+
+      // if it's a cloudwatch assertion, then we check all of the metrics in the array
+      if (assertion.key == "cloudwatch") {
+        for (i=0; i<target.length; i++) {
+          Relationships[assertion.relationship].fn.call(this, target[i].Value, assertion.operand);
+        }
+        return {
+            success:true
+        }
+      }
+
       // expect(target, 'Assertion target').to.be.a('string');
       var test = assertion.operand;
       var relationship = Relationships[assertion.relationship];
