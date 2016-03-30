@@ -6,13 +6,19 @@ var _ = require('lodash')
 var Relationships = {
   equal:{
     requiresOperand:true,
-    fn:function(target,test){
+    fn:function(target, test){
+      if (typeof target === 'number'){
+        target = target.toString();
+      }
       expect(target, 'Assertion target').to.equal(test);
     },
   },
   notEqual:{
     requiresOperand:true,
-    fn:function(target,test){
+    fn:function(target, test){
+      if (typeof target === 'number'){
+        target = target.toString();
+      }
       expect(target, 'Assertion target').to.not.equal(test);
     }
   },
@@ -30,21 +36,24 @@ var Relationships = {
   },
   contain:{
     requiresOperand:true,
-    fn:function(target,test){
+    fn:function(target, test){
       test = new RegExp(_.escapeRegExp(test),'gi');
       expect(target, 'Assertion target').to.match(test);
     }
   },
   notContain:{
     requiresOperand:true,
-    fn:function(target,test){
+    fn:function(target, test){
       test = new RegExp(_.escapeRegExp(test),'gi');
       expect(target, 'Assertion target').to.not.match(test);
     }
   },
   regExp:{
     requiresOperand:true,
-    fn:function(target,test){
+    fn:function(target, test){
+      if (typeof target === 'number'){
+        target = target.toString();
+      }
       test = new RegExp(test);
       expect(target, 'Assertion target').to.match(test);
     }
@@ -135,9 +144,30 @@ var Tests = {
     return dataValue;
   },
   cloudwatch: function(response, assertion){
+    //goal is to return a single metric from the full array
+    ensureResponse(response);
     expect(response.metrics, 'Cloudwatch metrics').to.exist;
     expect(response.metrics, 'Cloudwatch metrics').to.be.an('array');
-    return response.metrics;
+    var values = _.chain(response.metrics)
+    .map(function(metric){
+      expect(metric, 'Metric').to.be.an('object');
+      expect(assertion.value, 'Assertion.value').to.be.a('string');
+      var matched = metric.Name === assertion.value;
+      return matched ? _.get(metric, 'Value') : null;
+    })
+    .compact()
+    .sortBy(function(a){
+      return a;
+    })
+    .value();
+    expect(values, 'Metric values array').to.be.an('array');
+    expect(values, 'Metric values array length').to.have.length.above(0);
+    if (assertion.relationship === 'lessThan'){
+      return _.last(values);
+    } else if (assertion.relationship === 'greaterThan'){
+      return _.head(values);
+    }
+    return values[0];
   }
 }
 
@@ -159,7 +189,6 @@ module.exports = {
   },
 
   checkAssertion: function(assertion, response) {
-
     try {
       //setup Relationships
       expect(Relationships, 'Relationships').to.exist;
@@ -175,24 +204,14 @@ module.exports = {
       expect(response, 'runAssertion response').to.be.ok;
       expect(response, 'Check response').to.be.an('object');
 
-    var target = Tests[assertion.key].call(this, response, assertion);
+      var target = Tests[assertion.key].call(this, response, assertion);
       expect(target, 'Target').to.exist;
 
-      // if it's a cloudwatch assertion, then we check all of the metrics in the array
-      if (assertion.key == "cloudwatch") {
-        for (i=0; i<target.length; i++) {
-          Relationships[assertion.relationship].fn.call(this, target[i].Value, assertion.operand);
-        }
-        return {
-            success:true
-        }
-      }
-
-      // expect(target, 'Assertion target').to.be.a('string');
       var test = assertion.operand;
       var relationship = Relationships[assertion.relationship];
       if(Relationships[assertion.relationship].requiresOperand){
         expect(test, 'Assertion test').to.exist;
+        //conform the assertion test to a string, always.
         if(typeof test === 'number'){
           test = test.toString();
         }
@@ -200,7 +219,7 @@ module.exports = {
       }
       Relationships[assertion.relationship].fn.call(this, target, test);
       return {
-        success:true
+        success: true
       }
     } catch(err) {
       delete err.stack;
