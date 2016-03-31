@@ -150,10 +150,10 @@ var Tests = {
     expect(response.metrics, 'Cloudwatch metrics').to.be.an('array');
     var values = _.chain(response.metrics)
     .map(function(metric){
-      expect(metric, 'Metric').to.be.an('object');
+      expect(metric, 'metric').to.be.an('object');
       expect(assertion.value, 'Assertion.value').to.be.a('string');
-      var matched = metric.Name === assertion.value;
-      return matched ? _.get(metric, 'Value') : null;
+      var matched = metric.name === assertion.value;
+      return matched ? _.get(metric, 'value') : null;
     })
     .compact()
     .sortBy(function(a){

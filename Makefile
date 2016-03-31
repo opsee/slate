@@ -3,8 +3,8 @@ CONTAINER_TAG := $(shell git rev-parse HEAD)
 ifneq ($(SLATE_VERSION), "")
 	CONTAINER_TAG := $(SLATE_VERSION)
 endif
-CONTAINER_NAME := "quay.io/opsee/slate"
-CONTAINER_PORTS := "7000:7000"
+CONTAINER_NAME := quay.io/opsee/slate
+CONTAINER_PORTS := 7000:7000
 
 all: clean build
 
@@ -19,6 +19,7 @@ run:
 	docker run -l "${CONTAINER_NAME}:${CONTAINER_TAG}" -p ${CONTAINER_PORTS} ${CONTAINER_NAME}:${CONTAINER_TAG}
 
 stop: 
+	echo 'stopping ${CONTAINER_NAME}:${CONTAINER_TAG}'
 	docker stop `docker ps --filter label="${CONTAINER_NAME}:${CONTAINER_TAG}" --format "{{.ID}}"`
 
 docker-clean:

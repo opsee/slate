@@ -1,0 +1,26 @@
+{  
+    "assertions": [
+    { 
+      "key": "cloudwatch",
+      "value": "CPUUtilization",
+      "relationship":"greaterThan",
+      "operand": "10"
+    },
+    { 
+      "key": "cloudwatch",
+      "value": "CPUUtilization",
+      "relationship":"lessThan",
+      "operand": "95"
+    }
+  ],
+  "response": {
+    "metrics": [
+      {
+        "name":"CPUUtilization",
+        "value":80, 
+        "tags":[],
+        "timestamp":""
+      }
+   ]
+  }
+}
