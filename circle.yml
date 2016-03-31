@@ -11,6 +11,8 @@ machine:
     - docker
   node:
     version: 5.4
+  environment:
+    SLATE_VERSION: $CIRCLE_SHA1
 test:
   override:
     - make
