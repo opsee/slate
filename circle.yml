@@ -16,6 +16,7 @@ machine:
 test:
   override:
     - make
+    - npm run test
 deployment:
   hub:
     branch: master
