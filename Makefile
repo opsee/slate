@@ -1,6 +1,6 @@
 # CONTAINER_TAG is git revision unless overriden by SLATE_VERSION
 CONTAINER_TAG := $(shell git rev-parse HEAD)
-ifeq ($(SLATE_VERSION), "")
+ifneq ($(SLATE_VERSION), "")
 	CONTAINER_TAG := $(SLATE_VERSION)
 endif
 CONTAINER_NAME := "quay.io/opsee/slate"
