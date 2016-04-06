@@ -1,18 +1,16 @@
-var start = process.hrtime();
-
 const chai = require('chai');
 const expect = chai.expect;
 const _ = require('lodash');
 const colors = require('colors');
 
 const slate = require('../src/slate');
-const exampleHttp = require('./example_http');
-const exampleCloudwatch = require('./example_cloudwatch');
 
 const examples = {
   http: require('./example_http'),
   cloudwatch: require('./example_cloudwatch')
 }
+
+var start = process.hrtime();
 
 const tests = [];
 
