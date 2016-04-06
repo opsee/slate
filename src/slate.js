@@ -63,8 +63,8 @@ var Resolvers = {
   greaterThan:{
     requiresOperand:true,
     fn:function(target, test){
-      target = parseFloat(target, 10);
-      test = parseFloat(test, 10);
+      target = parseFloat(parseFloat(target, 10).toFixed(2));
+      test = parseFloat(parseFloat(test, 10).toFixed(2));
       expect(target, 'Assertion target').to.be.ok;
       expect(target, 'Assertion target').to.be.a('number');
       expect(test, 'Operand').to.be.a('number');
@@ -74,8 +74,8 @@ var Resolvers = {
   lessThan:{
     requiresOperand:true,
     fn:function(target, test){
-      target = parseFloat(target, 10);
-      test = parseFloat(test, 10);
+      target = parseFloat(parseFloat(target, 10).toFixed(2));
+      test = parseFloat(parseFloat(test, 10).toFixed(2));
       expect(target, 'Assertion target').to.be.ok;
       expect(target, 'Assertion target').to.be.a('number');
       expect(test, 'Operand').to.be.a('number');

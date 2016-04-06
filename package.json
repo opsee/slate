@@ -1,6 +1,6 @@
 {
   "name": "slate",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "description": "Check assertion processor",
   "main": "index.js",
   "scripts": {
