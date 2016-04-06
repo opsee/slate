@@ -6,13 +6,19 @@ var _ = require('lodash')
 var Relationships = {
   equal:{
     requiresOperand:true,
-    fn:function(target,test){
+    fn:function(target, test){
+      if (typeof target === 'number'){
+        target = target.toString();
+      }
       expect(target, 'Assertion target').to.equal(test);
     },
   },
   notEqual:{
     requiresOperand:true,
-    fn:function(target,test){
+    fn:function(target, test){
+      if (typeof target === 'number'){
+        target = target.toString();
+      }
       expect(target, 'Assertion target').to.not.equal(test);
     }
   },
@@ -30,21 +36,24 @@ var Relationships = {
   },
   contain:{
     requiresOperand:true,
-    fn:function(target,test){
+    fn:function(target, test){
       test = new RegExp(_.escapeRegExp(test),'gi');
       expect(target, 'Assertion target').to.match(test);
     }
   },
   notContain:{
     requiresOperand:true,
-    fn:function(target,test){
+    fn:function(target, test){
       test = new RegExp(_.escapeRegExp(test),'gi');
       expect(target, 'Assertion target').to.not.match(test);
     }
   },
   regExp:{
     requiresOperand:true,
-    fn:function(target,test){
+    fn:function(target, test){
+      if (typeof target === 'number'){
+        target = target.toString();
+      }
       test = new RegExp(test);
       expect(target, 'Assertion target').to.match(test);
     }
@@ -83,6 +92,7 @@ var Tests = {
     ensureResponse(response);
     return response.code.toString();
   },
+
   header: function(response, assertion){
     ensureResponse(response);
     expect(response.headers, 'Response headers').to.exist;
@@ -98,6 +108,7 @@ var Tests = {
     }
     return header;
   },
+
   body: function(response, assertion){
     ensureResponse(response);
     expect(response.body, 'Response body').to.be.ok;
@@ -107,6 +118,7 @@ var Tests = {
     expect(response.body, 'Response body').to.be.a('string');
     return response.body;
   },
+
   json: function(response, assertion){
     ensureResponse(response);
     expect(response.body, 'Response.body').to.be.ok;
@@ -130,6 +142,33 @@ var Tests = {
     }
     expect(typeof dataValue, 'typeof json result').to.equal('string');
     return dataValue;
+  },
+  cloudwatch: function(response, assertion){
+    //goal is to return a single metric from the full array
+    ensureResponse(response);
+    expect(response.metrics, 'Cloudwatch metrics').to.exist;
+    expect(response.metrics, 'Cloudwatch metrics').to.be.an('array');
+    var values = _.chain(response.metrics)
+    .map(function(metric){
+      expect(metric, 'metric').to.be.an('object');
+      expect(metric, 'metric').to.contain.all.keys(['name', 'value']);
+      expect(assertion.value, 'Assertion.value').to.be.a('string');
+      var matched = metric.name === assertion.value;
+      return matched ? _.get(metric, 'value') : null;
+    })
+    .compact()
+    .sortBy(function(a){
+      return a;
+    })
+    .value();
+    expect(values, 'Metric values array').to.be.an('array');
+    expect(values, 'Metric values array length').to.have.length.above(0);
+    if (assertion.relationship === 'lessThan'){
+      return _.last(values);
+    } else if (assertion.relationship === 'greaterThan'){
+      return _.head(values);
+    }
+    return values[0];
   }
 }
 
@@ -163,17 +202,17 @@ module.exports = {
         expect(relationship, 'Relationship').to.contain.all.keys(['requiresOperand', 'fn']);
       });
 
-
       expect(response, 'runAssertion response').to.be.ok;
       expect(response, 'Check response').to.be.an('object');
 
       var target = Tests[assertion.key].call(this, response, assertion);
       expect(target, 'Target').to.exist;
-      // expect(target, 'Assertion target').to.be.a('string');
+
       var test = assertion.operand;
       var relationship = Relationships[assertion.relationship];
       if(Relationships[assertion.relationship].requiresOperand){
         expect(test, 'Assertion test').to.exist;
+        //conform the assertion test to a string, always.
         if(typeof test === 'number'){
           test = test.toString();
         }
@@ -181,7 +220,7 @@ module.exports = {
       }
       Relationships[assertion.relationship].fn.call(this, target, test);
       return {
-        success:true
+        success: true
       }
     } catch(err) {
       delete err.stack;
