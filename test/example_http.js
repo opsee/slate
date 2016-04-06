@@ -119,6 +119,12 @@ module.exports = {
       relationship: 'lessThan',
       value: 'request_latency_ms',
       operand: '300'
+    },
+    {
+      key: 'metric',
+      relationship: 'greaterThan',
+      value: 'request_latency_ms',
+      operand: '80.8454060000000'
     }
   ],
   'response': {
