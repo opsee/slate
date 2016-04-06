@@ -92,7 +92,6 @@ var Tests = {
     ensureResponse(response);
     return response.code.toString();
   },
-
   header: function(response, assertion){
     ensureResponse(response);
     expect(response.headers, 'Response headers').to.exist;
@@ -108,7 +107,6 @@ var Tests = {
     }
     return header;
   },
-
   body: function(response, assertion){
     ensureResponse(response);
     expect(response.body, 'Response body').to.be.ok;
@@ -118,7 +116,6 @@ var Tests = {
     expect(response.body, 'Response body').to.be.a('string');
     return response.body;
   },
-
   json: function(response, assertion){
     ensureResponse(response);
     expect(response.body, 'Response.body').to.be.ok;
@@ -143,7 +140,7 @@ var Tests = {
     expect(typeof dataValue, 'typeof json result').to.equal('string');
     return dataValue;
   },
-  cloudwatch: function(response, assertion){
+  metric: function(response, assertion){
     //goal is to return a single metric from the full array
     ensureResponse(response);
     expect(response.metrics, 'Cloudwatch metrics').to.exist;
@@ -169,6 +166,9 @@ var Tests = {
       return _.head(values);
     }
     return values[0];
+  },
+  cloudwatch: function(response, assertion){
+    return Tests.metric(response, assertion);
   }
 }
 
@@ -205,7 +205,10 @@ module.exports = {
       expect(response, 'runAssertion response').to.be.ok;
       expect(response, 'Check response').to.be.an('object');
 
-      var target = Tests[assertion.key].call(this, response, assertion);
+      var testFn = Tests[assertion.key];
+      expect(testFn, 'The test function').to.be.a('function');
+
+      var target = testFn.call(this, response, assertion);
       expect(target, 'Target').to.exist;
 
       var test = assertion.operand;
@@ -223,11 +226,9 @@ module.exports = {
         success: true
       }
     } catch(err) {
-      delete err.stack;
-      delete err.showDiff;
       return {
         success:false,
-        error:JSON.stringify(err)
+        error:JSON.stringify(_.omit(err, ['stack', 'showDiff']))
       }
     }
   },

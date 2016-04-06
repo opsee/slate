@@ -114,6 +114,12 @@ module.exports = {
       value: 'HealthCheck.Interval',
       operand: 40
     },
+    {
+      key: 'metric',
+      relationship: 'lessThan',
+      value: 'request_latency_ms',
+      operand: '300'
+    }
   ],
   'response': {
     'code': 200,
