@@ -5,22 +5,22 @@ var _ = require('lodash')
 , relationships = require('./relationships')
 ;
 
+var DECIMALS = 2;
+
+function stringToFloat(string){
+  return parseFloat(parseFloat(string, 10).toFixed(DECIMALS));
+}
+
 var Resolvers = {
   equal:{
     requiresOperand:true,
     fn:function(target, test){
-      if (typeof target === 'number'){
-        target = target.toString();
-      }
       expect(target, 'Assertion target').to.equal(test);
     },
   },
   notEqual:{
     requiresOperand:true,
     fn:function(target, test){
-      if (typeof target === 'number'){
-        target = target.toString();
-      }
       expect(target, 'Assertion target').to.not.equal(test);
     }
   },
@@ -53,9 +53,6 @@ var Resolvers = {
   regExp:{
     requiresOperand:true,
     fn:function(target, test){
-      if (typeof target === 'number'){
-        target = target.toString();
-      }
       test = new RegExp(test);
       expect(target, 'Assertion target').to.match(test);
     }
@@ -63,8 +60,8 @@ var Resolvers = {
   greaterThan:{
     requiresOperand:true,
     fn:function(target, test){
-      target = parseFloat(parseFloat(target, 10).toFixed(2));
-      test = parseFloat(parseFloat(test, 10).toFixed(2));
+      target = stringToFloat(target);
+      test = stringToFloat(test);
       expect(target, 'Assertion target').to.be.ok;
       expect(target, 'Assertion target').to.be.a('number');
       expect(test, 'Operand').to.be.a('number');
@@ -74,8 +71,8 @@ var Resolvers = {
   lessThan:{
     requiresOperand:true,
     fn:function(target, test){
-      target = parseFloat(parseFloat(target, 10).toFixed(2));
-      test = parseFloat(parseFloat(test, 10).toFixed(2));
+      target = stringToFloat(target);
+      test = stringToFloat(test);
       expect(target, 'Assertion target').to.be.ok;
       expect(target, 'Assertion target').to.be.a('number');
       expect(test, 'Operand').to.be.a('number');
@@ -136,7 +133,11 @@ var Tests = {
     //need to convert to string here to conform to other tests
     if (dataValue && typeof dataValue !== 'string'){
       try {
-        dataValue = JSON.stringify(dataValue);
+        if (typeof dataValue === 'number'){
+          dataValue = dataValue.toFixed(DECIMALS);
+        } else {
+          dataValue = JSON.stringify(dataValue);
+        }
       } catch(err){}
     }
     expect(typeof dataValue, 'typeof json result').to.equal('string');
@@ -219,18 +220,24 @@ module.exports = {
       var target = testFn.call(this, response, assertion);
       expect(target, 'Target').to.exist;
 
+      if (typeof target === 'number'){
+        //conform target to string
+        target = target.toFixed(DECIMALS);
+      }
+
       expect(_.find(relationships, {id: assertion.relationship}), 'Relationship').to.be.an('object');
 
       var resolver = Resolvers[assertion.relationship];
       expect(resolver, 'Resolver').to.be.an('object');
       
       var test = assertion.operand;
+      //conform the assertion test to a string, always.
+      if (typeof test === 'number'){
+        test = test.toFixed(DECIMALS);
+      }
+        
       if (resolver.requiresOperand){
         expect(test, 'Assertion test').to.exist;
-        //conform the assertion test to a string, always.
-        if(typeof test === 'number'){
-          test = test.toString();
-        }
         expect(test, 'Assertion test').to.be.a('string');
       }
       
