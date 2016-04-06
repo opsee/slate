@@ -22,34 +22,34 @@ module.exports = {
   'response': {
     'metrics': [
       {
-        'Name':'CPUUtilization',
-        'Value':11, 
-        'Tags':[],
-        'Timestamp':''
+        'name':'CPUUtilization',
+        'value':11, 
+        'tags':[],
+        'timestamp':''
       },
       {
-        'Name':'CPUUtilization',
-        'Value':94, 
-        'Tags':[],
-        'Timestamp':''
+        'name':'CPUUtilization',
+        'value':94, 
+        'tags':[],
+        'timestamp':''
       },
       {
-        'Name':'CPUUtilization',
-        'Value':60, 
-        'Tags':[],
-        'Timestamp':''
+        'name':'CPUUtilization',
+        'value':60, 
+        'tags':[],
+        'timestamp':''
       },
       {
-        'Name':'Memory',
-        'Value':60, 
-        'Tags':[],
-        'Timestamp':''
+        'name':'Memory',
+        'value':60, 
+        'tags':[],
+        'timestamp':''
       },
       {
-        'Name':'Memory',
-        'Value':60, 
-        'Tags':[],
-        'Timestamp':''
+        'name':'Memory',
+        'value':60, 
+        'tags':[],
+        'timestamp':''
       }
     ]
   }

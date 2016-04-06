@@ -151,6 +151,7 @@ var Tests = {
     var values = _.chain(response.metrics)
     .map(function(metric){
       expect(metric, 'metric').to.be.an('object');
+      expect(metric, 'metric').to.contain.all.keys(['name', 'value']);
       expect(assertion.value, 'Assertion.value').to.be.a('string');
       var matched = metric.name === assertion.value;
       return matched ? _.get(metric, 'value') : null;
