@@ -106,7 +106,7 @@ module.exports = {
       key:'json',
       relationship: 'equal',
       value: 'HealthCheck.Interval',
-      operand: 30
+      operand: 30.000
     },
     {
       key:'json',
@@ -125,6 +125,12 @@ module.exports = {
       relationship: 'greaterThan',
       value: 'request_latency_ms',
       operand: '80.8354060000000'
+    },
+    {
+      key: 'metric',
+      relationship: 'equal',
+      value: 'request_latency_ms',
+      operand: '80.85'
     }
   ],
   'response': {
