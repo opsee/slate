@@ -1,9 +1,11 @@
 var _ = require('lodash')
 , chai = require ('chai')
 , expect = chai.expect
+, types = require('./types')
+, relationships = require('./relationships')
 ;
 
-var Relationships = {
+var Resolvers = {
   equal:{
     requiresOperand:true,
     fn:function(target, test){
@@ -145,13 +147,15 @@ var Tests = {
     ensureResponse(response);
     expect(response.metrics, 'Cloudwatch metrics').to.exist;
     expect(response.metrics, 'Cloudwatch metrics').to.be.an('array');
+    expect(assertion.value, 'Assertion value').to.be.a('string');
     var values = _.chain(response.metrics)
+    .filter(function(metric){
+      return _.get(metric, 'name') === _.get(assertion, 'value');
+    })
     .map(function(metric){
       expect(metric, 'metric').to.be.an('object');
       expect(metric, 'metric').to.contain.all.keys(['name', 'value']);
-      expect(assertion.value, 'Assertion.value').to.be.a('string');
-      var matched = metric.name === assertion.value;
-      return matched ? _.get(metric, 'value') : null;
+      return metric.value;
     })
     .compact()
     .sortBy(function(a){
@@ -172,13 +176,24 @@ var Tests = {
   }
 }
 
+//setup Resolvers
+expect(Resolvers, 'Resolvers').to.exist;
+expect(Resolvers, 'Resolvers').to.be.an('object');
+var keys = _.keys(Resolvers);
+expect(keys, 'Resolvers keys').to.exist;
+expect(keys, 'Resolvers keys').to.have.length.above(0);
+_.forEach(Resolvers, function(relationship){
+  expect(relationship, 'Relationship').to.be.an('object');
+  expect(relationship, 'Relationship').to.contain.all.keys(['requiresOperand', 'fn']);
+});
+
 module.exports = {
   validateAssertion: function(assertion) {
     if (assertion == null) {
       return 'Received null assertion.';
     }
 
-    if (!(assertion.relationship in Relationships)) {
+    if (!(assertion.relationship in Resolvers)) {
       return 'Unsupported check relationship ' + assertion.relationship;
     }
 
@@ -191,29 +206,26 @@ module.exports = {
 
   checkAssertion: function(assertion, response) {
     try {
-      //setup Relationships
-      expect(Relationships, 'Relationships').to.exist;
-      expect(Relationships, 'Relationships').to.be.an('object');
-      var keys = _.keys(Relationships);
-      expect(keys, 'Relationships keys').to.exist;
-      expect(keys, 'Relationships keys').to.have.length.above(0);
-      _.forEach(Relationships, function(relationship){
-        expect(relationship, 'Relationship').to.be.an('object');
-        expect(relationship, 'Relationship').to.contain.all.keys(['requiresOperand', 'fn']);
-      });
-
       expect(response, 'runAssertion response').to.be.ok;
       expect(response, 'Check response').to.be.an('object');
+      expect(assertion, 'Assertion').to.be.ok;
+      expect(assertion, 'Assertion').to.be.an('object');
+      expect(assertion, 'Assertion').to.contain.all.keys(['key', 'relationship']);
 
+      expect(_.find(types, {id: assertion.key}), 'Assertion type').to.be.an('object');
       var testFn = Tests[assertion.key];
       expect(testFn, 'The test function').to.be.a('function');
 
       var target = testFn.call(this, response, assertion);
       expect(target, 'Target').to.exist;
 
+      expect(_.find(relationships, {id: assertion.relationship}), 'Relationship').to.be.an('object');
+
+      var resolver = Resolvers[assertion.relationship];
+      expect(resolver, 'Resolver').to.be.an('object');
+      
       var test = assertion.operand;
-      var relationship = Relationships[assertion.relationship];
-      if(Relationships[assertion.relationship].requiresOperand){
+      if (resolver.requiresOperand){
         expect(test, 'Assertion test').to.exist;
         //conform the assertion test to a string, always.
         if(typeof test === 'number'){
@@ -221,10 +233,14 @@ module.exports = {
         }
         expect(test, 'Assertion test').to.be.a('string');
       }
-      Relationships[assertion.relationship].fn.call(this, target, test);
+      
+      //the magic
+      resolver.fn.call(this, target, test);
+      
       return {
         success: true
       }
+
     } catch(err) {
       return {
         success:false,
