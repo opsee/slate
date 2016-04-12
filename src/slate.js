@@ -231,9 +231,14 @@ module.exports = {
       expect(resolver, 'Resolver').to.be.an('object');
       
       var test = assertion.operand;
-      //conform the assertion test to a string, always.
+      //conform the assertion test to a string.
+      //do not use decimals for status code because it is treated as int
       if (typeof test === 'number'){
-        test = test.toFixed(DECIMALS);
+        if (assertion.key === 'code'){
+          test = test.toString();
+        } else {
+          test = test.toFixed(DECIMALS);
+        }
       }
         
       if (resolver.requiresOperand){
