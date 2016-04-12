@@ -7,6 +7,11 @@ module.exports = {
     },
     {
       key: 'code',
+      relationship: 'equal',
+      operand: 200
+    },
+    {
+      key: 'code',
       relationship: 'notEqual',
       operand: '300'
     },
