@@ -5,6 +5,7 @@ module.exports = {
       relationship: 'equal',
       operand: '200'
     },
+    //status code is the only operand that can be a string or number
     {
       key: 'code',
       relationship: 'equal',
@@ -111,13 +112,13 @@ module.exports = {
       key:'json',
       relationship: 'equal',
       value: 'HealthCheck.Interval',
-      operand: 30.000
+      operand: '30'
     },
     {
       key:'json',
       relationship: 'lessThan',
       value: 'HealthCheck.Interval',
-      operand: 40
+      operand: '40'
     },
     {
       key: 'metric',
