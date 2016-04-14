@@ -62,7 +62,6 @@ var Resolvers = {
     fn:function(target, test){
       target = stringToFloat(target);
       test = stringToFloat(test);
-      expect(target, 'Assertion target').to.be.ok;
       expect(target, 'Assertion target').to.be.a('number');
       expect(test, 'Operand').to.be.a('number');
       expect(target, 'Assertion target').to.be.above(test);
@@ -73,7 +72,6 @@ var Resolvers = {
     fn:function(target, test){
       target = stringToFloat(target);
       test = stringToFloat(test);
-      expect(target, 'Assertion target').to.be.ok;
       expect(target, 'Assertion target').to.be.a('number');
       expect(test, 'Operand').to.be.a('number');
       expect(target, 'Assertion target').to.be.below(test);
@@ -131,7 +129,7 @@ var Tests = {
       dataValue = _.get(data, assertion.value)
     }
     //need to convert to string here to conform to other tests
-    if (dataValue && typeof dataValue !== 'string'){
+    if (dataValue !== undefined && typeof dataValue !== 'string'){
       try {
         dataValue = JSON.stringify(dataValue);
       } catch(err){}
