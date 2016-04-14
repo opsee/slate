@@ -133,11 +133,7 @@ var Tests = {
     //need to convert to string here to conform to other tests
     if (dataValue && typeof dataValue !== 'string'){
       try {
-        if (typeof dataValue === 'number'){
-          dataValue = dataValue.toFixed(DECIMALS);
-        } else {
-          dataValue = JSON.stringify(dataValue);
-        }
+        dataValue = JSON.stringify(dataValue);
       } catch(err){}
     }
     expect(typeof dataValue, 'typeof json result').to.equal('string');
