@@ -149,6 +149,12 @@ module.exports = {
       relationship: 'equal',
       value: 'request_latency_ms',
       operand: '80.84540600'
+    },
+    {
+      key: 'metric',
+      relationship: 'notEqual',
+      value: 'request_latency_ms',
+      operand: '80.84540601'
     }
   ],
   'response': {
