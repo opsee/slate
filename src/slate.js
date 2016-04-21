@@ -5,7 +5,7 @@ var _ = require('lodash')
 , relationships = require('./relationships')
 ;
 
-var DECIMALS = 2;
+var DECIMALS = 8;
 
 function stringToFloat(string){
   return parseFloat(parseFloat(string, 10).toFixed(DECIMALS));
@@ -15,7 +15,14 @@ var Resolvers = {
   equal:{
     requiresOperand:true,
     fn:function(target, test){
-      expect(target, 'Assertion target').to.equal(test);
+      var arr = [];
+      arr.push(target === test);
+      var targetFloat = parseFloat(target);
+      var testFloat = parseFloat(test);
+      if (!_.isNaN(targetFloat) && !_.isNaN(testFloat)){
+        arr.push(targetFloat === testFloat);
+      }
+      expect(_.some(arr), 'Assertion target').to.be.ok;
     },
   },
   notEqual:{
@@ -152,19 +159,20 @@ var Tests = {
       expect(metric, 'metric').to.contain.all.keys(['name', 'value']);
       return metric.value;
     })
-    .compact()
-    .sortBy(function(a){
-      return a;
-    })
     .value();
     expect(values, 'Metric values array').to.be.an('array');
     expect(values, 'Metric values array length').to.have.length.above(0);
     if (assertion.relationship === 'lessThan'){
-      return _.last(values);
+      return _.chain(values).sortBy(function(a){
+        return a;
+      }).last().value();
     } else if (assertion.relationship === 'greaterThan'){
-      return _.head(values);
+      return _.chain(values).sortBy(function(a){
+        return a;
+      }).head().value();
     }
-    return values[0];
+    //use most recent metric as default, assuming the metrics are sorted by timestamp
+    return _.last(values);
   },
   cloudwatch: function(response, assertion){
     return Tests.metric(response, assertion);
