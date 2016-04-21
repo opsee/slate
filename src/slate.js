@@ -35,7 +35,7 @@ var Resolvers = {
       if (!_.isNaN(targetFloat) && !_.isNaN(testFloat)){
         arr.push(targetFloat !== testFloat);
       }
-      expect(_.every(arr), 'Some of the Not Equal arr').to.be.ok;
+      expect(_.every(arr), 'Every one of the Not Equal arr').to.be.ok;
     }
   },
   empty:{
