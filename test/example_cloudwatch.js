@@ -17,6 +17,24 @@ module.exports = {
       value: 'Memory',
       relationship:'equal',
       operand: 60
+    },
+    { 
+      key: 'cloudwatch',
+      value: 'ReadLatency',
+      relationship:'equal',
+      operand: '0.0006'
+    },
+    { 
+      key: 'cloudwatch',
+      value: 'ReadLatency',
+      relationship:'greaterThan',
+      operand: '0.00030000'
+    },
+    { 
+      key: 'cloudwatch',
+      value: 'ReadLatency',
+      relationship:'greaterThan',
+      operand: .0003
     }
   ],
   'response': {
@@ -48,6 +66,18 @@ module.exports = {
       {
         'name':'Memory',
         'value':60, 
+        'tags':[],
+        'timestamp':''
+      },
+      {
+        'name':'ReadLatency',
+        'value':0.0004, 
+        'tags':[],
+        'timestamp':''
+      },
+      {
+        'name':'ReadLatency',
+        'value':0.000600, 
         'tags':[],
         'timestamp':''
       }

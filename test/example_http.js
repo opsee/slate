@@ -148,7 +148,7 @@ module.exports = {
       key: 'metric',
       relationship: 'equal',
       value: 'request_latency_ms',
-      operand: '80.85'
+      operand: '80.84540600'
     }
   ],
   'response': {
