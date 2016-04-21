@@ -22,13 +22,20 @@ var Resolvers = {
       if (!_.isNaN(targetFloat) && !_.isNaN(testFloat)){
         arr.push(targetFloat === testFloat);
       }
-      expect(_.some(arr), 'Assertion target').to.be.ok;
+      expect(_.some(arr), 'Some of the Equal arr').to.be.ok;
     },
   },
   notEqual:{
     requiresOperand:true,
     fn:function(target, test){
-      expect(target, 'Assertion target').to.not.equal(test);
+      var arr = [];
+      arr.push(target !== test);
+      var targetFloat = parseFloat(target);
+      var testFloat = parseFloat(test);
+      if (!_.isNaN(targetFloat) && !_.isNaN(testFloat)){
+        arr.push(targetFloat !== testFloat);
+      }
+      expect(_.every(arr), 'Every one of the Not Equal arr').to.be.ok;
     }
   },
   empty:{
