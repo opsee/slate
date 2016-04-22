@@ -9,7 +9,7 @@ const log = new logger({
   streams: [
     {
       stream: process.stdout,
-      level: 'debug'
+      level: 'info'
     }
   ],
   serializers: restify.bunyan.serializers
@@ -39,13 +39,13 @@ function respond(req, res, next) {
 
         err = slate.validateAssertion(assertion);
         if (err) {
-          log.debug('validateResponse returned error: ' + JSON.stringify(err));
+          log.error('validateResponse returned error: ' + JSON.stringify(err));
           break;
         }
 
         slateResp = slate.checkAssertion(assertion, check.response);
         if (slateResp.error) {
-          log.debug('checkAssertion returned error: ' + JSON.stringify(slateResp));
+          log.error('checkAssertion returned error: ' + JSON.stringify(slateResp));
           break;
         }
       }
